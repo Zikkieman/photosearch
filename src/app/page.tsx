@@ -1,101 +1,146 @@
+"use client";
+import TomorrowDate from "@/helpers/date";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import CityCard from "@/components/cards/cityCard";
+import { DataType } from "@/libs/types";
+import { useCityImages } from "@/libs/queries/useCityImages";
+import Spinner from "@/components/spinner/Spinner";
 import Image from "next/image";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const cityFromUrl = searchParams.get("search") || "Abuja";
+
+  const [city, setCity] = useState("");
+  const [selectedCity, setSelectedCity] = useState(cityFromUrl);
+  const [page, setPage] = useState(1);
+  const [allResults, setAllResults] = useState<DataType[]>([]);
+
+  const { data, isLoading, error } = useCityImages(selectedCity, page);
+  const CardDetails: DataType[] = data?.results || [];
+
+  useEffect(() => {
+    setSelectedCity(cityFromUrl);
+    setPage(1);
+    setAllResults([]);
+  }, [cityFromUrl]);
+
+  const handleSearch = () => {
+    if (!city.trim()) return;
+    router.push(`/?search=${city}`);
+    setSelectedCity(city);
+    setPage(1);
+    setAllResults([]);
+  };
+
+  const loadMore = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    if (CardDetails.length > 0) {
+      setAllResults((prev) => [...prev, ...CardDetails]);
+    }
+  }, [data]);
+
+  return (
+    <div className="min-h-screen relative flex flex-col">
+      <div className="pt-20 w-full min-h-full  px-4 max-w-5xl mx-auto font-arial">
+        <div className="mb-20 flex flex-col sm:flex-row justify-between items-center">
+          <h5 className="font-pac font-bold text-2xl">PhotoSearch.</h5>
+          <p className="font-arial">{TomorrowDate()}</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <div className="flex items-center gap-5 mb-20">
+          <input
+            className="w-full outline-1 outline-gray-300 placeholder:font-arial placeholder:text-gray-400 block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 focus:outline-2 focus:outline-blue-500 sm:text-sm/6"
+            type="text"
+            placeholder="Enter city name..."
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+          <button
+            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-arial font-semibold text-white shadow-sm hover:bg-blue-500"
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+        </div>
+
+        {CardDetails.length > 0 && (
+          <div>
+            <h5 className="text-2xl mb-4">
+              Showing results for{" "}
+              <span className="font-bold border-b border-dotted border-black capitalize">
+                {selectedCity}
+              </span>
+            </h5>
+          </div>
+        )}
+
+        {isLoading && page === 1 ? (
+          <div className="mt-10">
+            <Spinner />
+          </div>
+        ) : !isLoading &&
+          data !== undefined &&
+          (error || CardDetails.length === 0) ? (
+          <div className="bg-white shadow-sm border border-gray-200 rounded-lg flex flex-col items-center mt-12 py-12">
+            <Image
+              src="/no-results.svg"
+              alt="error-image"
+              width={200}
+              height={200}
+            />
+            {CardDetails.length === 0 && (
+              <p className="mt-6 text-xl font-normal">
+                No result found for{" "}
+                <span className="font-bold border-b border-dotted border-black">
+                  {selectedCity}
+                </span>
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {allResults.map((item) => (
+                <CityCard key={item.id} item={item} />
+              ))}
+            </div>
+
+            {allResults.length > 0 && (
+              <div className="mt-10 mb-20 mx-auto">
+                <button
+                  className="bg-white border-[0.5px] border-gray-300 font-semibold text-sm shadow-sm hover:bg-gray-50 py-2 px-3 rounded-md text-black"
+                  onClick={loadMore}
+                  disabled={isLoading}
+                >
+                  Load More
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <footer className="w-full flex gap-1 justify-center mb-14 font-arial mt-auto">
+        <span className="text-[#212529] text-sm">
+          {" "}
+          © {new Date().getFullYear()}{" "}
+        </span>{" "}
+        <span className="font-pac text-sm">PhotoSearch.</span>{" "}
+        <span className="font-normal text-sm text-[#212529]">
+          ❤️ Ezekiel Oladele
+        </span>
       </footer>
+      <div className="absolute inset-x-0 top-0 bottom-0 z-[-1] flex flex-col">
+        <div className="h-1/2 bg-[#f4f4f4]"></div>
+        <div className="h-1/2 bg-[#ffffff]"></div>
+      </div>
     </div>
   );
 }

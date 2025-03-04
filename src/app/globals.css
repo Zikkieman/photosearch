@@ -1,21 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-pac: "Pacifico", serif;
+  --font-arial: "Arial", "Helvetica", sans-serif;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   color: var(--foreground);
