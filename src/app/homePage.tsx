@@ -139,7 +139,7 @@ export default function HomePage() {
         </span>
       </footer>
       <div className="absolute inset-x-0 top-0 bottom-0 z-[-1] flex flex-col">
-        <div className="h-[500px] bg-[#f4f4f4]"></div>
+        <div className="md:h-[500px] h-[375px] bg-[#f4f4f4]"></div>
         <div className="flex-grow bg-[#ffffff]"></div>
       </div>
     </div>
