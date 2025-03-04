@@ -52,7 +52,7 @@ export default function HomePage() {
       <div className="pt-20 w-full min-h-full  px-4 max-w-5xl mx-auto font-arial">
         <div className="mb-20 flex flex-col sm:flex-row justify-between items-center">
           <h5 className="font-pac font-bold text-2xl">PhotoSearch.</h5>
-          <p className="font-arial">{TomorrowDate()}</p>
+          <p className="font-arial font-light">{TomorrowDate()}</p>
         </div>
 
         <div className="flex items-center gap-5 mb-20">
@@ -139,8 +139,8 @@ export default function HomePage() {
         </span>
       </footer>
       <div className="absolute inset-x-0 top-0 bottom-0 z-[-1] flex flex-col">
-        <div className="h-1/2 bg-[#f4f4f4]"></div>
-        <div className="h-1/2 bg-[#ffffff]"></div>
+        <div className="h-[500px] bg-[#f4f4f4]"></div>
+        <div className="flex-grow bg-[#ffffff]"></div>
       </div>
     </div>
   );
